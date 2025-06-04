@@ -1,41 +1,50 @@
-const {
-    defineConfig,
-} = require("eslint/config");
+const { defineConfig } = require("eslint/config");
 
 const tsParser = require("@typescript-eslint/parser");
 const typescriptEslint = require("@typescript-eslint/eslint-plugin");
 const js = require("@eslint/js");
 
-const {
-    FlatCompat,
-} = require("@eslint/eslintrc");
+const { FlatCompat } = require("@eslint/eslintrc");
 
 const compat = new FlatCompat({
     baseDirectory: __dirname,
     recommendedConfig: js.configs.recommended,
-    allConfig: js.configs.all
+    allConfig: js.configs.all,
 });
 
-module.exports = defineConfig([{
-    languageOptions: {
-        parser: tsParser,
-        ecmaVersion: 2020,
-        sourceType: "module",
-        parserOptions: {},
+module.exports = defineConfig([
+    {
+        ignores: [
+            "node_modules/**",
+            ".next/**",
+            "dist/**",
+            "coverage/**",
+            "**.md",
+            "**/.config/",
+            "eslint.config.js"
+        ],
     },
+    {
+        languageOptions: {
+            parser: tsParser,
+            ecmaVersion: 2020,
+            sourceType: "module",
+            parserOptions: {},
+        },
 
-    plugins: {
-        "@typescript-eslint": typescriptEslint,
+        plugins: {
+            "@typescript-eslint": typescriptEslint,
+        },
+
+        extends: compat.extends(
+            "next",
+            "next/core-web-vitals",
+            "plugin:@typescript-eslint/recommended",
+            "eslint:recommended",
+        ),
+
+        rules: {
+            "@typescript-eslint/no-unused-vars": ["warn"],
+        },
     },
-
-    extends: compat.extends(
-        "next",
-        "next/core-web-vitals",
-        "plugin:@typescript-eslint/recommended",
-        "eslint:recommended",
-    ),
-
-    rules: {
-        "@typescript-eslint/no-unused-vars": ["warn"],
-    },
-}]);
+]);
