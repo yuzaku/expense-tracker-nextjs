@@ -3,6 +3,7 @@ import { checkUser } from '@/lib/checkUser';
 
 const Header = async () => {
   const user = await checkUser();
+  console.log(user)
 
   return (
     <nav className='navbar'>

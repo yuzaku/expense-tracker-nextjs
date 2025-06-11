@@ -23,6 +23,7 @@ async function getTransactions(): Promise<{
 
     return { transactions };
   } catch (error) {
+    console.error('Get transactions error:', error);
     return { error: 'Database error' };
   }
 }

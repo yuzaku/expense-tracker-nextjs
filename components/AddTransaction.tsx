@@ -8,6 +8,7 @@ const AddTransaction = () => {
 
   const clientAction = async (formData: FormData) => {
     const { data, error } = await addTransaction(formData);
+    console.log(data);
 
     if (error) {
       toast.error(error);
