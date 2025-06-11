@@ -27,3 +27,7 @@ jobs:
 
       - name: Run Tests (Jest)
         run: npm run test -- --ci --coverage
+
+      - name: Run Unit Tests
+        run: npm test
+

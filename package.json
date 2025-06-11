@@ -37,5 +37,10 @@
     "prisma": "^5.15.1",
     "ts-jest": "^29.3.4",
     "typescript": "^5"
-  }
+  },
+  "scripts": {
+  "test": "jest"
+}
+
+  
 }
