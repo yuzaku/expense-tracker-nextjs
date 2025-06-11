@@ -21,7 +21,8 @@ module.exports = defineConfig([
             "coverage/**",
             "**.md",
             "**/.config/",
-            "eslint.config.js"
+            "eslint.config.js",
+            "__test__"
         ],
     },
     {
