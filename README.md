@@ -68,3 +68,78 @@ npx prisma migrate dev --name init
 npm run dev
 ```
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## 🚀 CI/CD Workflow (GitHub Actions + Azure)
+
+This project uses GitHub Actions to automate testing and deployment to Azure App Services. The CI/CD setup is split into two workflows:
+
+### ✅ Lint and Test (ci.yml)
+
+This workflow ensures code quality and correctness every time code is pushed or a pull request is made to the main branch.
+
+#### Trigger:
+
+- ```push``` to ```main ```
+
+- ```pull_request``` to ```main```
+
+#### Steps:
+
+1. Checkout repository
+
+2. Setup Node.js version 20
+
+3. Install dependencies using npm ci
+
+4. Lint with ESLint (npm run lint)
+
+5. Run unit tests using Jest (npm run test with coverage)
+
+### 🚀 Build and Deploy to Azure (main_traxpenses.yml)
+This workflow is responsible for building the app and deploying it to Azure Web App (traxpenses).
+
+#### Trigger:
+
+- ```push``` to ```main```
+
+- Manual trigger (```workflow_dispatch```)
+
+#### Jobs:
+
+##### 🔧 Build
+
+1. Checkout code
+
+2. Setup Node.js version 20
+
+3. Install, build, and test:
+```bash
+npm install
+npm run build --if-present
+npm run test --if-present
+```
+
+4. Create deployment package using:
+```bash
+zip release.zip ./* .next -qr
+```
+
+5. Upload artifact for next job
+
+##### 🚀 Deploy
+
+1. Download artifact from build step
+
+2. Unzip deployment package
+
+3. Login to Azure using service principal credentials from GitHub Secrets
+
+4. Deploy to Azure Web App using azure/webapps-deploy@v3
+
+## ⚙️ Environment Variables
+
+Deployment relies on various environment variables (e.g., API keys, Clerk credentials) that must be configured manually in Azure:
+
+- Go to Azure Portal > your App Service > Settings > Environtment Variables
+
+- Add any necessary env vars here
