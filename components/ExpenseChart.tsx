@@ -1,4 +1,5 @@
 'use client';
+import { Transaction } from '@/types/Transaction';
 import { useEffect, useState, useCallback } from 'react';
 import getTransactions from '@/app/actions/getTransactions';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
@@ -6,7 +7,7 @@ import { BarChart3, RefreshCw, RotateCcw, TrendingDown } from 'lucide-react';
 
 const ExpenseChart = ({ refreshTrigger }: { refreshTrigger?: number }) => {
   const [data, setData] = useState<{ date: string; amount: number }[]>([]);
-  const [allTransactions, setAllTransactions] = useState<any[]>([]);
+  const [allTransactions, setAllTransactions] = useState<Transaction[]>([]);
   const [selectedMonth, setSelectedMonth] = useState<string>('');
   const [selectedYear, setSelectedYear] = useState<string>('');
   const [availableMonths, setAvailableMonths] = useState<string[]>([]);
@@ -43,6 +44,21 @@ const ExpenseChart = ({ refreshTrigger }: { refreshTrigger?: number }) => {
   useEffect(() => {
     fetchData();
   }, [fetchData, refreshTrigger]);
+
+  useEffect(() => {
+    const handleTransactionsUpdate = () => {
+      console.log('Sinyal pembaruan diterima oleh ExpenseChart, memuat ulang data...');
+      fetchData();
+    };
+    
+    // Mendengarkan event 'transactionsUpdated' yang konsisten
+    window.addEventListener('transactionsUpdated', handleTransactionsUpdate);
+
+    // Cleanup listener saat komponen dilepas
+    return () => {
+      window.removeEventListener('transactionsUpdated', handleTransactionsUpdate);
+    };
+  }, [fetchData]);
 
   useEffect(() => {
     if (allTransactions.length === 0) return;
@@ -85,7 +101,15 @@ const ExpenseChart = ({ refreshTrigger }: { refreshTrigger?: number }) => {
     { value: '10', label: 'Oktober' }, { value: '11', label: 'November' }, { value: '12', label: 'Desember' },
   ];
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  interface CustomTooltipProps {
+  active?: boolean;
+  payload?: {
+    value: number;
+  }[];
+  label?: string;
+}
+
+  const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-lg p-3 shadow-lg">

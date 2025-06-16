@@ -1,23 +1,21 @@
+const UPDATE_EVENT_NAME = 'transactionsUpdated';
+
 export const TransactionEvents = {
-  // Trigger ketika transaksi baru ditambahkan
+  // Semua fungsi sekarang akan memicu event yang sama
   triggerAdded: () => {
-    window.dispatchEvent(new CustomEvent('transactionAdded'));
+    window.dispatchEvent(new CustomEvent(UPDATE_EVENT_NAME));
   },
-
-  // Trigger ketika transaksi diupdate
+  
   triggerUpdated: () => {
-    window.dispatchEvent(new CustomEvent('transactionUpdated'));
+    window.dispatchEvent(new CustomEvent(UPDATE_EVENT_NAME));
   },
 
-  // Trigger ketika transaksi dihapus
   triggerDeleted: () => {
-    window.dispatchEvent(new CustomEvent('transactionDeleted'));
+    window.dispatchEvent(new CustomEvent(UPDATE_EVENT_NAME));
   },
-
-  // Trigger untuk semua jenis perubahan
+  
+  // Fungsi refresh ini sekarang menjadi lebih sederhana
   triggerRefresh: () => {
-    window.dispatchEvent(new CustomEvent('transactionAdded'));
-    window.dispatchEvent(new CustomEvent('transactionUpdated'));
-    window.dispatchEvent(new CustomEvent('transactionDeleted'));
+    window.dispatchEvent(new CustomEvent(UPDATE_EVENT_NAME));
   }
 };

@@ -99,6 +99,7 @@ const EditTransactionModal = ({ transaction, isOpen, onClose }: EditModalProps) 
       toast.error(error);
     } else {
       toast.success(message);
+      window.dispatchEvent(new CustomEvent('transactionsUpdated'));
       onClose();
     }
     setIsLoading(false);
@@ -151,6 +152,7 @@ const DeleteConfirmationModal = ({ transactionId, isOpen, onClose }: DeleteModal
       toast.error(error);
     } else {
       toast.success(message);
+      window.dispatchEvent(new CustomEvent('transactionsUpdated'));
       onClose();
     }
     setIsLoading(false);

@@ -3,47 +3,60 @@
 import getTransactions from '@/app/actions/getTransactions';
 import TransactionItem from './TransactionItem';
 import { Transaction } from '@/types/Transaction';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { History, AlertCircle, Calendar, Loader2 } from 'lucide-react';
 
 const TransactionList = () => {
   const [transactions, setTransactions] = useState<Transaction[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedMonth, setSelectedMonth] = useState(0); 
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()); 
 
-  // UPDATED: Default state for filters to show "Semua" initially can be set here.
-  const [selectedMonth, setSelectedMonth] = useState(0); // 0 for "Semua Bulan"
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()); // Default to current year
-
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      setIsLoading(true);
-      // Pass the selected values directly. The server action will handle the logic.
-      const { transactions: fetchedTransactions, error: fetchError } = await getTransactions({
-        month: selectedMonth,
-        year: selectedYear,
-      });
-      if (fetchError) {
-        setError(fetchError);
-        setTransactions(null);
-      } else {
-        setTransactions(fetchedTransactions || []);
-        setError(null);
-      }
-      setIsLoading(false);
-    };
-    fetchTransactions();
+  const fetchTransactions = useCallback(async () => {
+    setIsLoading(true);
+    const { transactions: fetchedTransactions, error: fetchError } = await getTransactions({
+      month: selectedMonth,
+      year: selectedYear,
+    });
+    if (fetchError) {
+      setError(fetchError);
+      setTransactions(null);
+    } else {
+      setTransactions(fetchedTransactions || []);
+      setError(null);
+    }
+    setIsLoading(false);
   }, [selectedMonth, selectedYear]);
 
+  useEffect(() => {
+    fetchTransactions();
+  }, [fetchTransactions]);
+
+  // Efek untuk mendengarkan event pembaruan transaksi
+  useEffect(() => {
+    const handleTransactionsUpdate = () => {
+      console.log('Sinyal pembaruan diterima oleh TransactionList, memuat ulang data...');
+      fetchTransactions();
+    };
+    
+    // Pastikan nama event konsisten dengan yang ada di transactionEvents.ts
+    window.addEventListener('transactionsUpdated', handleTransactionsUpdate);
+
+    return () => {
+      window.removeEventListener('transactionsUpdated', handleTransactionsUpdate);
+    };
+  }, [fetchTransactions]);
+  
+  // ... Sisa kode tidak berubah ...
   const months = [
-    { value: 0, name: 'Semua Bulan' }, // ADDED
-    { value: 1, name: 'Januari' }, { value: 2, name: 'Februari' }, { value: 3, name: 'Maret' },
+    { value: 0, name: 'Semua Bulan' }, { value: 1, name: 'Januari' }, { value: 2, name: 'Februari' }, { value: 3, name: 'Maret' },
     { value: 4, name: 'April' }, { value: 5, name: 'Mei' }, { value: 6, name: 'Juni' },
     { value: 7, name: 'Juli' }, { value: 8, name: 'Agustus' }, { value: 9, name: 'September' },
     { value: 10, name: 'Oktober' }, { value: 11, name: 'November' }, { value: 12, name: 'Desember' }
   ];
   const currentYear = new Date().getFullYear();
-  const years = [0, ...Array.from({ length: 5 }, (_, i) => currentYear - i)]; // ADDED 0
+  const years = [0, ...Array.from({ length: 5 }, (_, i) => currentYear - i)];
 
   const renderContent = () => {
     if (isLoading) {
@@ -94,7 +107,6 @@ const TransactionList = () => {
               {months.map(m => <option key={m.value} value={m.value}>{m.name}</option>)}
             </select>
             <select value={selectedYear} onChange={(e) => setSelectedYear(Number(e.target.value))} className="bg-white border border-gray-300 rounded-lg py-2 px-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
-              {/* UPDATED: To handle the display of "Semua Tahun" */}
               {years.map(y => <option key={y} value={y}>{y === 0 ? 'Semua Tahun' : y}</option>)}
             </select>
           </div>

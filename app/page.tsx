@@ -1,6 +1,5 @@
 import { currentUser } from '@clerk/nextjs/server';
 import Guest from '@/components/Guest';
-import Header from '@/components/Header';
 import AddTransaction from '@/components/AddTransaction';
 import Balance from '@/components/Balance';
 import IncomeExpense from '@/components/IncomeExpense';
@@ -15,7 +14,6 @@ const HomePage = async () => {
   
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      {/* Header Section */}
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
