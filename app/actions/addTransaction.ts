@@ -18,6 +18,14 @@ async function addTransaction(formData: FormData): Promise<TransactionResult> {
   const amountValue = formData.get('amount');
   const transactionType = formData.get('transactionType') as 'income' | 'expense';
 
+   // Get logged in user
+  const { userId } = auth();
+
+  // Check for user
+  if (!userId) {
+    return { error: 'User not found' };
+  }
+
   // Check for input values
   if (!textValue || textValue === '' || !amountValue || !transactionType) {
     return { error: 'Text, amount, or transaction type is missing' };
@@ -36,14 +44,6 @@ async function addTransaction(formData: FormData): Promise<TransactionResult> {
     amount = -amount;
   }
   // For income, keep it positive
-
-  // Get logged in user
-  const { userId } = auth();
-
-  // Check for user
-  if (!userId) {
-    return { error: 'User not found' };
-  }
 
   try {
     const transactionData: TransactionData = await db.transaction.create({
