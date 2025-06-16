@@ -32,14 +32,19 @@ jest.mock("next/cache", () => ({
 }));
 
 describe("addTransaction", () => {
-  it("should return transaction data when input is valid", async () => {
+  it("should return transaction data when input is valid for an expense", async () => {
     const addTransaction = await createAddTransaction(); // 🟢 userId OK
     const formData = new FormData();
+    
     formData.append("text", "Makan siang");
-    formData.append("amount", "-25000");
+    // Kirim amount sebagai string positif, seperti dari form di browser
+    formData.append("amount", "25000"); 
+    // Tambahkan transactionType yang sekarang wajib ada
+    formData.append("transactionType", "expense");
 
     const result = await addTransaction(formData);
 
+    // Ekspektasi tetap sama, karena action akan mengubah amount menjadi negatif
     expect(result.data).toEqual({
       text: "Makan siang",
       amount: -25000,
@@ -52,7 +57,8 @@ describe("addTransaction", () => {
     const addTransaction = await createAddTransaction(null); // 🔴 userId null
     const formData = new FormData();
     formData.append("text", "Belanja");
-    formData.append("amount", "-10000");
+    formData.append("amount", "10000");
+    formData.append("transactionType", "expense"); // Jangan lupa sertakan ini
 
     const result = await addTransaction(formData);
 
@@ -62,9 +68,13 @@ describe("addTransaction", () => {
   it("should return error when input missing", async () => {
     const addTransaction = await createAddTransaction();
     const formData = new FormData();
-    formData.append("amount", "-25000");
+    // Simulasi form di mana text tidak diisi
+    formData.append("amount", "25000");
+    formData.append("transactionType", "expense");
+
 
     const result = await addTransaction(formData);
-    expect(result.error).toBe("Text or amount is missing");
+    // Error message sekarang harusnya menyertakan 'transactionType'
+    expect(result.error).toBe("Text, amount, or transaction type is missing");
   });
 });

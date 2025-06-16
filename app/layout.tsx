@@ -22,9 +22,9 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang='en'>
-        <body className={roboto.className}>
+        <body className={`${roboto.className} grid grid-rows-[auto_1fr] min-h-screen`}>
           <Header />
-          <main className='container'>{children}</main>
+          <main className='flex items-center justify-center'>{children}</main>
           <ToastContainer />
         </body>
       </html>

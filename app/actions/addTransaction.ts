@@ -16,22 +16,34 @@ interface TransactionResult {
 async function addTransaction(formData: FormData): Promise<TransactionResult> {
   const textValue = formData.get('text');
   const amountValue = formData.get('amount');
+  const transactionType = formData.get('transactionType') as 'income' | 'expense';
 
-  // Check for input values
-  if (!textValue || textValue === '' || !amountValue) {
-    return { error: 'Text or amount is missing' };
-  }
-
-  const text: string = textValue.toString(); // Ensure text is a string
-  const amount: number = parseFloat(amountValue.toString()); // Parse amount as number
-
-  // Get logged in user
+   // Get logged in user
   const { userId } = auth();
 
   // Check for user
   if (!userId) {
     return { error: 'User not found' };
   }
+
+  // Check for input values
+  if (!textValue || textValue === '' || !amountValue || !transactionType) {
+    return { error: 'Text, amount, or transaction type is missing' };
+  }
+
+  const text: string = textValue.toString();
+  let amount: number = Math.abs(parseFloat(amountValue.toString())); // Ensure amount is positive
+
+  // Validate amount
+  if (isNaN(amount) || amount <= 0) {
+    return { error: 'Please enter a valid positive amount' };
+  }
+
+  // Convert to negative if it's an expense
+  if (transactionType === 'expense') {
+    amount = -amount;
+  }
+  // For income, keep it positive
 
   try {
     const transactionData: TransactionData = await db.transaction.create({
@@ -43,7 +55,6 @@ async function addTransaction(formData: FormData): Promise<TransactionResult> {
     });
 
     revalidatePath('/');
-
     return { data: transactionData };
   } catch (error) {
     console.error('Add transaction error:', error);
