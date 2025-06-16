@@ -1,4 +1,4 @@
-import { currentUser } from '@clerk/nextjs/server';
+import { checkUser } from '@/lib/checkUser';
 import Guest from '@/components/Guest';
 import AddTransaction from '@/components/AddTransaction';
 import Balance from '@/components/Balance';
@@ -7,7 +7,7 @@ import TransactionList from '@/components/TransactionList';
 import ExpenseChart from '@/components/ExpenseChart';
 
 const HomePage = async () => {
-  const user = await currentUser();
+  const user = await checkUser(); 
   if (!user) {
     return <Guest />;
   }
