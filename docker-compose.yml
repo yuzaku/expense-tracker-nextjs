@@ -1,0 +1,44 @@
+# docker-compose.yml
+version: '3.8'
+
+# Script untuk menjalankan:
+# docker-compose up -d
+
+# Script untuk stop:
+# docker-compose down
+
+# Script untuk hapus volume (HATI-HATI: akan menghapus semua data):
+# docker-compose down -v
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: traxpenses-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: traxpenses
+      POSTGRES_USER: traxpenses_user
+      POSTGRES_PASSWORD: traxpenses_password
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - traxpenses-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U traxpenses_user -d traxpenses"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+
+networks:
+  traxpenses-network:
+    driver: bridge
