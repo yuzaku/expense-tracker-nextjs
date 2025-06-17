@@ -39,7 +39,7 @@ const HomePage = async () => {
           
           {/* Expense Chart */}
           <div className="order-1 xl:order-2">
-            <ExpenseChart />
+            {/* <ExpenseChart /> */}
           </div>
         </div>
 
