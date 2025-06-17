@@ -1,4 +1,4 @@
-name: Lint and Test
+name: CI - Lint, Test, and Build
 
 on:
   push:
@@ -27,3 +27,17 @@ jobs:
 
       - name: Run Tests (Jest)
         run: npm run test -- --ci --coverage
+      
+      - name: Build Production App
+        run: npm run build
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      
+      - name: Zip artifact for deployment
+        run: zip release.zip ./* .next -qr
+      
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: node-app
+          path: release.zip
