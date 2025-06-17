@@ -95,7 +95,7 @@ This workflow ensures code quality and correctness every time code is pushed or 
 
 5. Run unit tests using Jest (npm run test with coverage)
 
-### 🚀 Build and Deploy to Azure (main_traxpenses.yml)
+### ✅ Build and Deploy to Azure (main_traxpenses.yml)
 This workflow is responsible for building the app and deploying it to Azure Web App (traxpenses).
 
 #### Trigger:
