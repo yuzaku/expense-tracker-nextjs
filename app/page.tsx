@@ -4,7 +4,7 @@ import AddTransaction from '@/components/AddTransaction';
 import Balance from '@/components/Balance';
 import IncomeExpense from '@/components/IncomeExpense';
 import TransactionList from '@/components/TransactionList';
-// import ExpenseChart from '@/components/ExpenseChart';
+import ExpenseChart from '@/components/ExpenseChart';
 
 const HomePage = async () => {
   const user = await checkUser(); 
@@ -39,7 +39,7 @@ const HomePage = async () => {
           
           {/* Expense Chart */}
           <div className="order-1 xl:order-2">
-            {/* <ExpenseChart /> */}
+            <ExpenseChart />
           </div>
         </div>
 
